@@ -1,15 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
-
-	<!-- Hover behaviour -->
-	<extension point="org.eclipse.wst.jsdt.ui.javaEditorTextHovers">
-		<hover
-			id="ca.umontreal.ift3150.js.JSHover"
-			class="ca.umontreal.ift3150.js.editor.JSHover"
-			activate="true">
-		</hover>
-	</extension>
 	
 	<!-- Marker definition -->
 	<extension point="org.eclipse.core.resources.markers"
@@ -64,56 +55,40 @@
 		</specification>
 	</extension>
 	
+	<!-- Marker quick fix -->
+	<extension point="org.eclipse.ui.ide.markerResolution">
+		<markerResolutionGenerator
+			markerType="ca.umontreal.ift3150.js.marker"
+			class="ca.umontreal.ift3150.js.editor.QuickFixer"/>
+	</extension>
+	
+	<!-- Menu on IProject -->
 	<extension point="org.eclipse.ui.popupMenus">
 		<objectContribution
 			id="ca.umontreal.ift3150.js.ui.menu"
 			objectClass="org.eclipse.core.resources.IProject">
 			<action
 				id="ca.umontreal.ift3150.js.ui.menu.action"
-				label="Open analysis file"
+				label="Open Profile File"
 				enablesFor="1"
 				class="ca.umontreal.ift3150.js.ui.Menu">
 			</action>
 		</objectContribution>
 	</extension>
 	
-	<!-- Menu & Button -->
-	<extension point="org.eclipse.ui.actionSets">
-		<actionSet
-			label="Action Set"
-			visible="true"
-			id="ca.umontreal.ift3150.js.ui.actionSet">
-			<menu
-				label="Analysis Menu"
-				id="sampleMenu">
-				<separator
-					name="sampleGroup">
-				</separator>
-			</menu>
-			<action
-				label="Analysis"
-				icon="icons/iconAnalysis.png"
-				class="ca.umontreal.ift3150.js.ui.AnalysisButtonAction"
-				tooltip="Select analysis results file"
-				menubarPath="sampleMenu/sampleGroup"
-				toolbarPath="sampleGroup"
-				id="ca.umontreal.ift3150.js.ui.AnalysisButtonAction">
-			</action>
-		</actionSet>
-	</extension>
-	
-	<!-- Preferences pages -->
-	<extension
-    	point="org.eclipse.ui.preferencePages">
-    	<page
-			name="Plugin JS"
-			id="ca.umontreal.ift3150.js.preferences.pluginpage"
-			class="ca.umontreal.ift3150.js.preferences.PluginPage"/>
-		<page
-			name="Choix des couleurs"
-			id="ca.umontreal.ift3150.js.preferences.colorpage"
-			class="ca.umontreal.ift3150.js.preferences.ColorPreferencesPage"
-			category="ca.umontreal.ift3150.js.preferences.pluginpage"/>
-	</extension>
+	<!-- View -->
+	<extension point="org.eclipse.ui.views">
+		<category
+        	name="Plugin JS"
+            id="PluginCategory">
+		</category>
+		<view
+			name="Plugin View"
+			category="PluginCategory"
+			icon="icons/color-palette.png"
+			class="ca.umontreal.ift3150.js.ui.PluginView"
+			id="ca.umontreal.ift3150.js.ui.PluginView">
+		</view>
+   </extension>
 
 </plugin>

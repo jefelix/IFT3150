@@ -1,7 +1,6 @@
 package ca.umontreal.ift3150.js.ui;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.preferences.ConfigurationScope;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.graphics.Point;
@@ -16,12 +15,10 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.layout.GridData;
-import org.osgi.service.prefs.BackingStoreException;
-import org.osgi.service.prefs.Preferences;
-
-import ca.umontreal.ift3150.js.Activator;
-import ca.umontreal.ift3150.js.editor.JSHover;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import ca.umontreal.ift3150.js.parser.AnalysisFileParser;
+import ca.umontreal.ift3150.js.preferences.PluginPreferences;
 
 public class SelectAnalysisWindow extends Dialog {
 	
@@ -37,7 +34,7 @@ public class SelectAnalysisWindow extends Dialog {
 	@Override
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
-		shell.setText("Import analysis results");
+		shell.setText("Select profile file");
 	}
 	
 	@Override
@@ -50,7 +47,7 @@ public class SelectAnalysisWindow extends Dialog {
 		container.setLayout(gl_container);
 
 		fieldFilePath = new Text(container, SWT.BORDER | SWT.READ_ONLY);
-		fieldFilePath.setText(getPref("filePath"));
+		fieldFilePath.setText(PluginPreferences.getPref("filePath"));
 		fieldFilePath.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
 		Button buttonBrowse = new Button(container, SWT.PUSH);
@@ -83,33 +80,24 @@ public class SelectAnalysisWindow extends Dialog {
 
 	@Override
 	protected void okPressed() {
-		savePref("filePath", fieldFilePath.getText());
+		PluginPreferences.savePref("filePath", fieldFilePath.getText());
 		AnalysisFileParser afp = new AnalysisFileParser(fieldFilePath.getText(), project);
 		afp.initiliazeParser();
-		JSHover jsh = new JSHover(afp);
-		//afp.printTextInfo();
-		//afp.printNumericInfo();
-		super.okPressed();
-	}
-	
-	public void savePref(String key, String value){
-		System.out.println("pathPrefs: "+ConfigurationScope.INSTANCE.getLocation());
-		Preferences preferences = ConfigurationScope.INSTANCE.getNode(Activator.PLUGIN_ID);
-		Preferences sub1 = preferences.node("analysisPreferences");
-		sub1.put(key, value);
-		try {
-			preferences.flush();
-			System.out.println("Sauvegarder!");
-		} catch (BackingStoreException e) {
-			e.printStackTrace();
+				
+		ModelProvider model = new ModelProvider(afp);
+		if(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(PluginView.ID) == null){
+			try {
+				PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(PluginView.ID);
+			} catch (PartInitException e) {
+				e.printStackTrace();
+			}
 		}
-	}
-	
-	public String getPref(String key){
-		Preferences preferences = ConfigurationScope.INSTANCE.getNode(Activator.PLUGIN_ID);
-		Preferences sub1 = preferences.node("analysisPreferences");
-		String value = sub1.get(key, "");
-		return value;
+		else{
+			PluginView.viewer.setInput(ModelProvider.data);
+			PluginView.viewer.refresh();
+		}
+		
+		super.okPressed();
 	}
 	
 	public String getFilePath() {

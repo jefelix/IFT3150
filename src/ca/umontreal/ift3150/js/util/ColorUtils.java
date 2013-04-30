@@ -1,8 +1,8 @@
 package ca.umontreal.ift3150.js.util;
 
 import org.eclipse.swt.graphics.Color;
-
 import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.TextPresentation;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.graphics.Device;
@@ -14,8 +14,13 @@ public class ColorUtils {
 		Device device = Display.getCurrent();
 		Color black = device.getSystemColor(SWT.COLOR_BLACK);
 		System.out.println(start+" ==> "+end+" "+color);
+		TextPresentation presentation = new TextPresentation();
+		//StyleRange old = textViewer.getTextWidget().getStyleRangeAtOffset(start+1);
+		//System.out.println(old);
 		StyleRange sr = new StyleRange(start, end - start, black, color);
-		textViewer.getTextWidget().setStyleRange(sr);
+		presentation.addStyleRange(sr);
+		textViewer.changeTextPresentation(presentation, true);
+		//textViewer.getTextWidget().setStyleRange(sr);
 	}
 	
 	/**
@@ -30,15 +35,17 @@ public class ColorUtils {
 
 		float hueMax = 0;
 		float hueMin = 0;
+		float ratio = 0;
 		if (startHSB[0] > endHSB[0]) {
 			hueMax = startHSB[0];
 			hueMin = endHSB[0];
+			ratio = 1 - (value / (maxvalue - minvalue));
 		} else {
 			hueMin = startHSB[0];
 			hueMax = endHSB[0];
-		}
-
-		float ratio = 1 - (value / (maxvalue - minvalue));
+			ratio = (value / (maxvalue - minvalue));
+		} 
+		
 		float hue = ((hueMax - hueMin) * ratio) + hueMin;
 
 		java.awt.Color res = java.awt.Color.getHSBColor(hue, saturation, brightness);

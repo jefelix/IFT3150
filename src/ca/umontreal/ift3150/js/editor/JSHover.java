@@ -19,11 +19,6 @@ import ca.umontreal.ift3150.js.parser.AnalysisFileParser;
 public class JSHover implements ITextHover, IJavaEditorTextHover, ITextHoverExtension{
 
 	private IEditorPart editor;
-	private AnalysisFileParser parser;
-	
-	public JSHover(AnalysisFileParser parser){
-		this.parser = parser;
-	}
 	
 	public String getHoverInfo(ITextViewer textViewer, IRegion region) {
 		//String info = parser.findRegion(region.getOffset(), region.getOffset() + region.getLength());
@@ -39,7 +34,7 @@ public class JSHover implements ITextHover, IJavaEditorTextHover, ITextHoverExte
 		} catch (BadLocationException e) {
 			e.printStackTrace();
 		}*/
-		return null;
+		return "gege";
 	}
 
 	public IRegion getHoverRegion(ITextViewer arg0, int arg1) {
