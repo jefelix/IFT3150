@@ -1,27 +1,9 @@
 package ca.umontreal.ift3150.js.util;
 
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.jface.text.ITextViewer;
-import org.eclipse.jface.text.TextPresentation;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.StyleRange;
-import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.widgets.Display;
 
 public class ColorUtils {
-
-	public static void colore(ITextViewer textViewer, int start, int end, Color color){
-		Device device = Display.getCurrent();
-		Color black = device.getSystemColor(SWT.COLOR_BLACK);
-		System.out.println(start+" ==> "+end+" "+color);
-		TextPresentation presentation = new TextPresentation();
-		//StyleRange old = textViewer.getTextWidget().getStyleRangeAtOffset(start+1);
-		//System.out.println(old);
-		StyleRange sr = new StyleRange(start, end - start, black, color);
-		presentation.addStyleRange(sr);
-		textViewer.changeTextPresentation(presentation, true);
-		//textViewer.getTextWidget().setStyleRange(sr);
-	}
 	
 	/**
 	 * Source: http://fr.softuses.com/41317
