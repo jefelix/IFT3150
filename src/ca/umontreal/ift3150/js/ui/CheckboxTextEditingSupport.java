@@ -6,6 +6,11 @@ import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 
+/**
+ * Permet d'éditer les checkboxes du tableau 
+ * pour l'affichage des informations sur les métriques
+ *
+ */
 public class CheckboxTextEditingSupport extends EditingSupport {
 
 	private final TableViewer viewer;

@@ -5,6 +5,10 @@ import java.beans.PropertyChangeSupport;
 
 import org.eclipse.swt.graphics.RGB;
 
+/**
+ * Le modèle de la vue PluginView.
+ *
+ */
 public class Data {
 
 	private String metricName;

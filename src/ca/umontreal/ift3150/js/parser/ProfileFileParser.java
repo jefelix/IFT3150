@@ -38,7 +38,11 @@ import ca.umontreal.ift3150.js.editor.LineStyle;
 import ca.umontreal.ift3150.js.ui.Data;
 import ca.umontreal.ift3150.js.util.ColorUtils;
 
-public class AnalysisFileParser {
+/**
+ * Permet de parser un fichier de profils
+ *
+ */
+public class ProfileFileParser {
 
 	private String filePath;
 	private JSONObject fileJsonObject;
@@ -57,7 +61,7 @@ public class AnalysisFileParser {
 	private HashMap<IFile, StyleRange[]> oldStyles;
 	private HashMap<IFile, LineStyleListener> listeners;
 
-	public AnalysisFileParser(String filePath, IProject project){
+	public ProfileFileParser(String filePath, IProject project){
 		this.filePath = filePath;
 		this.project = project;
 		this.textViewers = new HashMap<IFile, ITextViewer>();
@@ -237,7 +241,7 @@ public class AnalysisFileParser {
 			IPath path = new Path(filename);
 			IFile file = project.getFile(path);
 			
-			JSMarker.deleteMarkers(file);
+			JSMarker.deleteMarker(file);
 			
 			/*ITextViewer textViewer = textViewers.get(file);
 			textViewer.getTextWidget().removeLineStyleListener(listeners.get(file));

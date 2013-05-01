@@ -17,16 +17,21 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
-import ca.umontreal.ift3150.js.parser.AnalysisFileParser;
+
+import ca.umontreal.ift3150.js.parser.ProfileFileParser;
 import ca.umontreal.ift3150.js.preferences.PluginPreferences;
 
-public class SelectAnalysisWindow extends Dialog {
+/**
+ * Fenêtre de sélection d'un fichier de profils
+ *
+ */
+public class SelectProfileFileWindow extends Dialog {
 	
 	private Text fieldFilePath;
 	private String filePath;
 	private IProject project;
 
-	public SelectAnalysisWindow(Shell parentShell, IProject project) {
+	public SelectProfileFileWindow(Shell parentShell, IProject project) {
 		super(parentShell);
 		this.project = project;
 	}
@@ -81,7 +86,7 @@ public class SelectAnalysisWindow extends Dialog {
 	@Override
 	protected void okPressed() {
 		PluginPreferences.savePref("filePath", fieldFilePath.getText());
-		AnalysisFileParser afp = new AnalysisFileParser(fieldFilePath.getText(), project);
+		ProfileFileParser afp = new ProfileFileParser(fieldFilePath.getText(), project);
 		afp.initiliazeParser();
 				
 		ModelProvider model = new ModelProvider(afp);

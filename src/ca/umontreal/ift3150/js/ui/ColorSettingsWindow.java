@@ -18,6 +18,11 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+/**
+ * Fenêtre de sélection des valeurs min et max des métriques numériques 
+ * et des couleurs correspondantes
+ *
+ */
 public class ColorSettingsWindow extends Dialog{
 
 	private RGB minColor;
@@ -56,9 +61,6 @@ public class ColorSettingsWindow extends Dialog{
 		textMinValue = new Text(container, SWT.BORDER | SWT.MULTI);
 		textMinValue.setText(minValue);
 		
-		/*Label labelMin = new Label(container, SWT.CENTER);
-		labelMin.setText("Min color:");*/
-		
 		Button buttonMin = new Button(container, SWT.PUSH | SWT.BORDER);
 		buttonMin.setText("Min color");
 		final Text textMin = new Text(container, SWT.BORDER | SWT.MULTI);
@@ -82,9 +84,6 @@ public class ColorSettingsWindow extends Dialog{
 		labelMaxValue.setText("Max value:");
 		textMaxValue = new Text(container, SWT.BORDER | SWT.MULTI);
 		textMaxValue.setText(maxValue);
-		
-		/*Label labelMax = new Label(container, SWT.CENTER);
-		labelMax.setText("Max color:");*/
 		
 		Button buttonMax = new Button(container, SWT.PUSH | SWT.BORDER);
 		buttonMax.setText("Max color");

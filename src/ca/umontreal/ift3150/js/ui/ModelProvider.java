@@ -6,17 +6,20 @@ import java.util.List;
 import org.eclipse.swt.graphics.RGB;
 import org.json.simple.JSONObject;
 
-import ca.umontreal.ift3150.js.parser.AnalysisFileParser;
+import ca.umontreal.ift3150.js.parser.ProfileFileParser;
 
+/**
+ * Remplit le tableau à partir des
+ * informations dans le fichier de profils
+ *
+ */
 public class ModelProvider {
 	
 	public static List<Data> data;
-	public static String currentAnalysisFilePath = "";
-	public static AnalysisFileParser afp;
+	public static ProfileFileParser afp;
 	
-	public ModelProvider(AnalysisFileParser afp) {
+	public ModelProvider(ProfileFileParser afp) {
 		this.afp = afp;
-		currentAnalysisFilePath = afp.getFilePath();
 		data = new ArrayList<Data>();
 		for(Object metric : afp.getDeclarations().keySet()) {
 			JSONObject metricInfo = (JSONObject) afp.getDeclarations().get(metric);
@@ -34,10 +37,6 @@ public class ModelProvider {
 
 	public List<Data> getData() {
 		return data;
-	}
-	
-	public AnalysisFileParser getAnalysisFileParser(){
-		return afp;
 	}
 
 } 

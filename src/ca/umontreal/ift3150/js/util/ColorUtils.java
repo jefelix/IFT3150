@@ -3,6 +3,10 @@ package ca.umontreal.ift3150.js.util;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;
 
+/**
+ * Fournit une méthode pour l'interpolation de couleur
+ *
+ */
 public class ColorUtils {
 	
 	/**

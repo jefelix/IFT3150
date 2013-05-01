@@ -9,6 +9,10 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 
+/**
+ * Gère l'ajout d'un menu sur un projet Eclipse permettant d'ouvrir un fichier de profil
+ *
+ */
 public class Menu implements IObjectActionDelegate{
 
 	ISelection selection;
@@ -24,7 +28,7 @@ public class Menu implements IObjectActionDelegate{
 		Display display = Display.getCurrent();
 		Shell parent = new Shell(display);
 
-		SelectAnalysisWindow window = new SelectAnalysisWindow(parent, selectedProject);
+		SelectProfileFileWindow window = new SelectProfileFileWindow(parent, selectedProject);
 		window.setBlockOnOpen(true);
 		window.open();	
 	}

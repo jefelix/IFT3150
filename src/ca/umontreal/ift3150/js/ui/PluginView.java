@@ -29,6 +29,17 @@ import org.eclipse.ui.part.ViewPart;
 
 import ca.umontreal.ift3150.js.Activator;
 
+/**
+ * Crée une vue pour Eclipse.
+ * 
+ * Elle contient un tableau qui permet 
+ * de choisir quelles métriques afficher
+ * ou colorer.
+ * 
+ * Le modèle associé au tableau
+ * est la classe Data.
+ *
+ */
 public class PluginView extends ViewPart{
 
 	public static final String ID = "ca.umontreal.ift3150.js.ui.PluginView";

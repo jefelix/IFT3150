@@ -10,6 +10,11 @@ import org.eclipse.swt.custom.LineStyleListener;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.graphics.Color;
 
+/**
+ * Redéfinit le style d'une ligne lors de l'affichage dans l'éditeur
+ * @see org.eclipse.swt.custom.LineStyleListener
+ *
+ */
 public class LineStyle implements LineStyleListener{
 
 	private ArrayList<Object[]> offsetsRegions = new ArrayList<Object[]>();

@@ -6,6 +6,10 @@ import org.osgi.service.prefs.Preferences;
 
 import ca.umontreal.ift3150.js.Activator;
 
+/**
+ * Permet de gérer (sauvegarder ou récupérer) des préférences pour le plugin
+ *
+ */
 public class PluginPreferences {
 
 	public static void savePref(String key, String value){
