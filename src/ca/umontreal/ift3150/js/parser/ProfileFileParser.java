@@ -13,11 +13,13 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.TextPresentation;
+import org.eclipse.jface.text.source.projection.ProjectionViewer;
 import org.eclipse.swt.custom.LineStyleListener;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.graphics.Color;
@@ -57,7 +59,7 @@ public class ProfileFileParser {
 	private static String STRING_MAPS = "maps";
 
 	private HashMap<IFile, ITextViewer> textViewers;
-	private ArrayList<String> files;
+	private ArrayList<IFile> files;
 	private HashMap<IFile, StyleRange[]> oldStyles;
 	private HashMap<IFile, LineStyleListener> listeners;
 
@@ -65,7 +67,7 @@ public class ProfileFileParser {
 		this.filePath = filePath;
 		this.project = project;
 		this.textViewers = new HashMap<IFile, ITextViewer>();
-		this.files = new ArrayList<String>();
+		this.files = new ArrayList<IFile>();
 		this.oldStyles = new HashMap<IFile, StyleRange[]>();
 		this.listeners = new HashMap<IFile, LineStyleListener>();
 		try {
@@ -79,7 +81,8 @@ public class ProfileFileParser {
 		}
 	}
 
-	public void initiliazeParser(){
+	public boolean initiliazeParser(){
+		boolean isProfileFileValid = true;
 		// Parsage du fichiers
 		this.declarations = parseDeclarations();
 		this.maps = parseMaps();
@@ -87,18 +90,40 @@ public class ProfileFileParser {
 		// Récupération des fichiers
 		for(Object ref : references.keySet()){
 			String filename = getFileNameFromReference(ref.toString());
-			if(!files.contains(filename)){
-				files.add(filename);
-			}
-		}
-		// Récupération des textViewers et des styles
-		for(String filename : files){
 			IPath path = new Path(filename);
 			IFile file = project.getFile(path);
-			if(!textViewers.containsKey(file)){
-				IEditorPart editorPart = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findEditor(new FileEditorInput(file));
-				if (editorPart != null) {
+			if(!file.exists()){
+				MessageDialog.openError(Display.getDefault().getActiveShell(), "Error", "The file "+file.getName()+" doesn't exist!");
+				isProfileFileValid = false;
+				break;
+			}
+			else{
+				if(!files.contains(file)){
+					files.add(file);
+				}
+			}
+		}
+		if(isProfileFileValid){
+			// Récupération des textViewers et des styles
+			for(IFile file : files){
+				if(!textViewers.containsKey(file)){
+					IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+					IEditorPart editorPart = page.findEditor(new FileEditorInput(file));
+					if(editorPart != null){
+						page.closeEditor(editorPart, false);
+					}
+					//if(editorPart == null){
+					IEditorDescriptor desc = PlatformUI.getWorkbench().getEditorRegistry().getDefaultEditor(file.getName());
+					try {
+						editorPart = page.openEditor(new FileEditorInput(file), desc.getId());
+					} catch (PartInitException e) {
+						e.printStackTrace();
+					}
+					//}
+					
 					ITextOperationTarget target = (ITextOperationTarget)editorPart.getAdapter(ITextOperationTarget.class);
+					ProjectionViewer p = (ProjectionViewer)target;
+					p.doOperation(ProjectionViewer.EXPAND_ALL);
 					if (target instanceof ITextViewer) {
 						ITextViewer textViewer = (ITextViewer)target;
 						textViewers.put(file, textViewer);
@@ -107,6 +132,7 @@ public class ProfileFileParser {
 				}
 			}
 		}
+		return isProfileFileValid;
 	}
 
 	public JSONObject parseDeclarations() {
@@ -161,10 +187,9 @@ public class ProfileFileParser {
 				}
 			}
 			if(!info.equals("")){
-				info = info.substring(0,Math.min(80,info.length()));
+				//info = info.substring(0,Math.min(80,info.length()));
 				IPath path = new Path(getFileNameFromReference(ref.toString()));
 				IFile file = project.getFile(path);
-				//openFile(file);
 				ITextViewer textViewer = textViewers.get(file);
 				IDocument doc = textViewer.getDocument();
 				try {
@@ -220,7 +245,7 @@ public class ProfileFileParser {
 			ArrayList<Object[]> regions = entry.getValue();
 			ITextViewer textViewer = textViewers.get(file);
 			StyleRange[] old = oldStyles.get(file);
-			
+
 			LineStyle linestyle = new LineStyle();
 			TextPresentation tp = new TextPresentation();
 			tp.mergeStyleRanges(old);
@@ -229,23 +254,17 @@ public class ProfileFileParser {
 			listeners.put(file, linestyle);
 			textViewer.getTextWidget().addLineStyleListener(linestyle);
 
-			//StyleRange[] newStyles = linestyle.getStyles().toArray(new StyleRange[linestyle.getStyles().size()]);
-			//oldStyles.put(file, newStyles);
-			
 			textViewer.getTextWidget().redraw();
 		}
 	}
-	
+
 	public void clear(){
-		for(String filename : files){
-			IPath path = new Path(filename);
-			IFile file = project.getFile(path);
-			
+		for(IFile file : files){
 			JSMarker.deleteMarker(file);
-			
+
 			/*ITextViewer textViewer = textViewers.get(file);
 			textViewer.getTextWidget().removeLineStyleListener(listeners.get(file));
-			
+
 			StyleRange[] old = oldStyles.get(file);*/
 			/*for(int i=0;i<old.length;i++){
 				System.out.println(old[i]);
@@ -256,7 +275,16 @@ public class ProfileFileParser {
 			linestyle.setTextPresentation(tp);
 			textViewer.getTextWidget().addLineStyleListener(linestyle);
 			textViewer.getTextWidget().redraw();*/
-			
+		}
+	}
+
+	private void openFiles(){
+		for(IFile file : files){
+			try {
+				openFile(file);
+			} catch (PartInitException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -269,9 +297,9 @@ public class ProfileFileParser {
 	}
 
 	public float getMax(String metricName){
+		float max = 0;
 		JSONObject metricDeclarations = (JSONObject) declarations.get(metricName);
 		if(metricDeclarations.get("type").equals("number") || metricDeclarations.get("type").equals("percent")){
-			float max = 0;
 			for(Object ref : references.keySet()){
 				JSONObject metrics = (JSONObject) references.get(ref);
 				for(Object metric : metrics.keySet()){
@@ -283,19 +311,47 @@ public class ProfileFileParser {
 					}
 				}
 			}
-			return max;
 		}
-		else{
-			return 0;
+		return max;
+	}
+	
+	public float getMin(String metricName){
+		JSONObject metricDeclarations = (JSONObject) declarations.get(metricName);
+		if(metricDeclarations.get("type").equals("number") || metricDeclarations.get("type").equals("percent")){
+			float min = 0;
+			
+			//premiere valeur
+			for(Object ref : references.keySet()){
+				JSONObject metrics = (JSONObject) references.get(ref);
+				for(Object metric : metrics.keySet()){
+					if(((String)metric).equals(metricName)){
+						Float value = ((Number)metrics.get(metric)).floatValue();
+						min = value;
+						break;
+					}
+				}
+			}
+			
+			for(Object ref : references.keySet()){
+				JSONObject metrics = (JSONObject) references.get(ref);
+				for(Object metric : metrics.keySet()){
+					if(((String)metric).equals(metricName)){
+						Float value = ((Number)metrics.get(metric)).floatValue();
+						if(value < min){
+							min = value;
+						}
+					}
+				}
+			}
+			return min;
 		}
+		else return 0;
 	}
 
-	public void openFile(IFile file) throws PartInitException{
+	private void openFile(IFile file) throws PartInitException{
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		IEditorDescriptor desc = PlatformUI.getWorkbench().getEditorRegistry().getDefaultEditor(file.getName());
-		if(page.findEditor(new FileEditorInput(file)) == null){
-			page.openEditor(new FileEditorInput(file), desc.getId());
-		}
+		page.openEditor(new FileEditorInput(file), desc.getId());
 	}
 
 	private String getFileNameFromReference(String reference){

@@ -222,15 +222,15 @@ public class PluginView extends ViewPart{
 	private void createActions() {
 		runAction = new Action("Run") {
 			public void run() {
-				ModelProvider.afp.printTextInfo(getMetricsToMark());
-				ModelProvider.afp.printNumericInfo(getMetricsToColor());
+				ModelProvider.parser.printTextInfo(getMetricsToMark());
+				ModelProvider.parser.printNumericInfo(getMetricsToColor());
 			}
 		};
 		runAction.setImageDescriptor(getImageDescriptor("run.png"));
 		
 		removeAction = new Action("Clear editor") {
 			public void run() {
-				ModelProvider.afp.clear();
+				ModelProvider.parser.clear();
 			}
 		};
 		removeAction.setImageDescriptor(getImageDescriptor("remove.png"));

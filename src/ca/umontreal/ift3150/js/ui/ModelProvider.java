@@ -16,18 +16,18 @@ import ca.umontreal.ift3150.js.parser.ProfileFileParser;
 public class ModelProvider {
 	
 	public static List<Data> data;
-	public static ProfileFileParser afp;
+	public static ProfileFileParser parser;
 	
-	public ModelProvider(ProfileFileParser afp) {
-		this.afp = afp;
+	public ModelProvider(ProfileFileParser parser) {
+		this.parser = parser;
 		data = new ArrayList<Data>();
-		for(Object metric : afp.getDeclarations().keySet()) {
-			JSONObject metricInfo = (JSONObject) afp.getDeclarations().get(metric);
+		for(Object metric : parser.getDeclarations().keySet()) {
+			JSONObject metricInfo = (JSONObject) parser.getDeclarations().get(metric);
 		    String metricName = (String) metric;
 		    String metricTitle = (String) metricInfo.get("title");
 			String metricType = (String) metricInfo.get("type");
 			if(metricType.equals("number") || metricType.equals("percent")){
-				data.add(new Data(metricName, metricTitle, metricType,  "0", new RGB(0,255,0), String.valueOf(afp.getMax(metricName)), new RGB(255, 0, 0)));
+				data.add(new Data(metricName, metricTitle, metricType,  String.valueOf(parser.getMin(metricName)), new RGB(0,255,0), String.valueOf(parser.getMax(metricName)), new RGB(255, 0, 0)));
 			}
 			else{
 				data.add(new Data(metricName, metricTitle, metricType, "", null, "", null));

@@ -87,22 +87,21 @@ public class SelectProfileFileWindow extends Dialog {
 	protected void okPressed() {
 		PluginPreferences.savePref("filePath", fieldFilePath.getText());
 		ProfileFileParser afp = new ProfileFileParser(fieldFilePath.getText(), project);
-		afp.initiliazeParser();
-				
-		ModelProvider model = new ModelProvider(afp);
-		if(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(PluginView.ID) == null){
-			try {
-				PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(PluginView.ID);
-			} catch (PartInitException e) {
-				e.printStackTrace();
+		if(afp.initiliazeParser()){
+			ModelProvider model = new ModelProvider(afp);
+			if(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(PluginView.ID) == null){
+				try {
+					PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(PluginView.ID);
+				} catch (PartInitException e) {
+					e.printStackTrace();
+				}
 			}
+			else{
+				PluginView.viewer.setInput(ModelProvider.data);
+				PluginView.viewer.refresh();
+			}
+			super.okPressed();
 		}
-		else{
-			PluginView.viewer.setInput(ModelProvider.data);
-			PluginView.viewer.refresh();
-		}
-		
-		super.okPressed();
 	}
 	
 	public String getFilePath() {
